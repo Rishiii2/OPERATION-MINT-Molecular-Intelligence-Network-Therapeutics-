@@ -1,0 +1,7 @@
+torch
+rdkit-pypi
+pandas
+scikit-learn
+fastapi
+uvicorn
+requests

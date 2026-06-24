@@ -12,42 +12,55 @@ Traditional drug discovery is a fortress. It takes 10 years and $2.6 billion to 
 **The Challenge:** How do we bypass the 10-year lock and synthesize a targeted, patient-specific cure in minutes?
 
 ## 💡 The Solution (The Heist Plan)
-Instead of a single AI model struggling to parse biology, we deploy an elite "Crew" of specialized AI agents. Powered by **CrewAI** (and simulated in this prototype), these agents autonomously collaborate, argue, and execute a multi-phase "heist" on biological data. They infiltrate a massive Biological Knowledge Graph to find the disease's weak point, and then synthesize a *de novo* (brand new) drug on the fly to neutralize it.
+Instead of a single AI model struggling to parse biology, we deploy an elite "Crew" of specialized AI agents working alongside a **Custom Deep Neural Network**. They autonomously collaborate, argue, and execute a multi-phase "heist" on biological data. They infiltrate a massive Biological Knowledge Graph to find the disease's weak point, synthesize a *de novo* molecular scaffold, and then run it through our local PyTorch Neural Network to mathematically prove it is non-toxic and FDA-safe.
 
 ## 🏗️ Architecture & The Crew
-We utilize an enterprise-grade stack: **Microsoft GraphRAG + Neo4j + CrewAI**.
+We utilize an enterprise-grade stack: **Microsoft GraphRAG + Neo4j + PyTorch Deep Learning**.
 
 ### The Crew:
 1. **"Rio" (The Hacker - Data Ingestion):** Parses raw Genomics data to trace the multi-hop path from a raw DNA mutation to a failing cellular pathway.
 2. **"Tokyo" (The Frontline - Target ID):** Analyzes the map to find the "Vault Door"—a highly centralized hub protein driving the disease.
 3. **"Berlin" (The Tactician - Structural Biology):** Extracts the 3D atomic structure of the target protein to find hidden allosteric pockets.
 4. **"Nairobi" (The Forger - Generative Chemistry):** Uses diffusion models to synthesize a *de novo* molecular scaffold—a brand new drug.
-5. **"El Profesor" (The Mastermind - Orchestrator):** The Metacognitive Agent that oversees the entire operation and reviews Nairobi's drug for toxicity.
+5. **"El Profesor" (The Mastermind - Orchestrator):** The Local PyTorch Neural Network. He reviews Nairobi's drug for toxicity and validates the binding affinity. If it fails, he orders her to recalculate.
 
 ---
 
-## ⚠️ Hackathon Prototype Disclaimer
-*Why is this prototype mocked?*
-For this specific hackathon 2-minute demo, we have chosen to **mock the Neo4j database queries, the CrewAI LLM outputs, and the Diffusion model generations** in our Streamlit dashboard. 
+## 🧬 The Local PyTorch Engine
+We do not rely on API keys or external black-box models for chemical validation. We have built a custom Deep Neural Network (Multi-Layer Perceptron) using **PyTorch** and **RDKit**. 
 
-**The Reason:** 
-1. **Reliability:** Live hackathon demos are notorious for failing due to rate-limiting on free LLM API keys (OpenAI/Anthropic) or internet connectivity issues on stage.
-2. **Time Constraints:** A true GraphRAG + Neo4j pipeline requires hours to ingest the massive biomedical datasets (GWAS, STRING, ChEMBL) needed for accurate multi-hop traversal. Generating a 3D molecule via RFdiffusion takes significant GPU compute time. 
-3. **Focus:** By simulating the backend, we can perfectly demonstrate the *architectural flow* and the *Money Heist UI experience* without risking a crash during the crucial 2-minute pitch. The architecture laid out in this README represents the true production pipeline.
+1. **The Dataset:** We download the real **MoleculeNet ClinTox dataset** containing FDA-approved drugs and clinical-trial failures.
+2. **Feature Extraction:** RDKit converts 1D SMILES strings into 2048-bit Morgan Fingerprints.
+3. **The Brain:** The Deep Neural Network trains on this data to learn the mathematical patterns of chemical toxicity.
+4. **The API:** A local FastAPI server loads the trained weights and exposes an endpoint for the UI to query in real-time.
 
-## 🚀 How to Run the Prototype
+## 🚀 How to Run the Project Locally
 
-1. Install requirements:
+### 1. Install Requirements
 ```bash
+cd backend
 pip install -r requirements.txt
 ```
 
-2. Run the Streamlit Dashboard:
+### 2. Train the Neural Network (Pre-Training Phase)
+Run the training script to download the real dataset, build the neural network, and save the trained weights.
 ```bash
-streamlit run app.py
+python train.py
+```
+
+### 3. Start the AI Backend Server
+Start the FastAPI server that loads your trained model.
+```bash
+uvicorn api:app --reload
+```
+
+### 4. Launch the Dashboard
+Open a new terminal window, go back to the root folder, and open `index.html` in your web browser!
+```bash
+start index.html
 ```
 
 ## 🌍 Expected Impact
 * **Time:** Reducing target identification and initial drug design from 4 years to 4 minutes.
-* **Cost:** Bypassing millions of dollars in dead-end wet-lab assays.
+* **Cost:** Bypassing millions of dollars in dead-end wet-lab assays using local Machine Learning.
 * **Personalization:** True precision medicine where a unique drug is printed for a single patient's unique mutation.

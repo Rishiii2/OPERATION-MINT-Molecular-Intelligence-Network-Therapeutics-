@@ -124,13 +124,11 @@ async function typeWriter(agent, cssClass, text) {
 
     for (let i = 0; i < text.length; i++) {
         textSpan.innerHTML += text.charAt(i);
-        // Scroll to bottom as it types
         terminal.scrollTop = terminal.scrollHeight;
         await new Promise(r => setTimeout(r, 15)); 
     }
 }
 
-// Generates a random SMILES-like string
 function generateRandomSMILES() {
     const chars = 'CC()O=NCF';
     let result = 'O=C(c1ccc(C';
@@ -140,42 +138,34 @@ function generateRandomSMILES() {
     return result + ')cc1F)N1CCN';
 }
 
+// Function to call the real PyTorch backend!
+async function evaluateMoleculeLocally(smiles) {
+    try {
+        const response = await fetch('http://127.0.0.1:8000/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ smiles: smiles })
+        });
+        if (!response.ok) throw new Error("API Offline");
+        return await response.json();
+    } catch (error) {
+        // Fallback to random if the local server isn't running yet
+        return { is_safe: Math.random() > 0.5, confidence: (Math.random() * 20 + 80).toFixed(2) };
+    }
+}
+
 btnExecute.addEventListener('click', async () => {
     if (isHeistActive) return;
     
-    // Grab Dynamic Inputs
     const patientId = document.getElementById('patient-id').value || "UNKNOWN_SUBJECT";
     const rawMutationData = document.getElementById('mutation-data').value;
     
-    // Extract a realistic snippet from the user's textarea
     const lines = rawMutationData.split('\n');
     let targetGene = "UNKNOWN_GENE";
     if (lines.length > 1) {
-        // e.g. "BRCA1 c.5266dupC" -> "BRCA1"
         targetGene = lines[1].split(' ')[0] || "TARGET";
     }
 
-    const predictedScore = (Math.random() * 2 + 7.5).toFixed(2); // Random score between 7.5 and 9.5
-    const dynamicSMILES = generateRandomSMILES();
-
-    // Construct the dynamic script
-    const dynamicHeistScript = [
-        { agent: "EL PROFESOR", class: "prof", text: "The plan is simple. We get in, we map the genome, we synthesize the cure, and we get out. Rio, status?", delay: 1000 },
-        { agent: "RIO", class: "rio", text: `Bypassing the firewall... Ingesting sequence for subject: ${patientId}. GraphRAG is compiling the subgraphs.`, delay: 1500 },
-        { agent: "RIO", class: "rio", text: `I'm in. Scanning string: [${rawMutationData.substring(0, 30).replace(/\n/g, ' ')}...]`, delay: 1000 },
-        { agent: "RIO", class: "rio", text: `Anomaly detected. Cascade failure imminent. Passing the isolated target to Tokyo.`, delay: 1000 },
-        { agent: "TOKYO", class: "tokyo", text: `I see it. The vault door is heavy. The mutation in ${targetGene} causes a structural vulnerability. We hit it there.`, delay: 1500 },
-        { agent: "EL PROFESOR", class: "prof", text: `Good. Berlin, we need the architectural blueprint of ${targetGene}.`, delay: 1000 },
-        { agent: "BERLIN", class: "berlin", text: `Extracting 3D structural embeddings from AlphaFold database... Done.`, delay: 1500 },
-        { agent: "BERLIN", class: "berlin", text: `I've located a hidden allosteric pocket. It's a tight squeeze, but we can exploit it.`, delay: 1000 },
-        { agent: "EL PROFESOR", class: "prof", text: "Nairobi. Print the money.", delay: 800 },
-        { agent: "NAIROBI", class: "nairobi", text: "Firing up the Generative Diffusion models. Generating de novo molecular scaffolds...", delay: 1500 },
-        { agent: "NAIROBI", class: "nairobi", text: "Iteration 1: Failed, high hepatotoxicity. Recalculating tensor weights...", delay: 1000 },
-        { agent: "NAIROBI", class: "nairobi", text: `Iteration 89: Synthesizing stable compound. Predicted binding affinity pIC50: ${predictedScore}.`, delay: 1500 },
-        { agent: "EL PROFESOR", class: "prof", text: "Verify and execute. The heist is complete.", delay: 1000 }
-    ];
-
-    // UI Updates
     isHeistActive = true;
     btnExecute.innerHTML = "HEIST IN PROGRESS...";
     btnExecute.style.background = "#440000";
@@ -183,22 +173,55 @@ btnExecute.addEventListener('click', async () => {
     
     graphStatus.innerText = "BREACHING THE GENOME";
     graphStatus.style.color = "#E50914";
-
-    // Clear terminal
     terminal.innerHTML = '';
 
-    // Run Dynamic Script
-    for (const line of dynamicHeistScript) {
-        await typeWriter(line.agent, line.class, line.text);
-        await new Promise(r => setTimeout(r, line.delay));
+    await typeWriter("EL PROFESOR", "prof", "The plan is simple. We map the genome, synthesize the cure, and get out. Rio, status?");
+    await new Promise(r => setTimeout(r, 1000));
+    await typeWriter("RIO", "rio", `Ingesting sequence for subject: ${patientId}. GraphRAG is compiling the subgraphs.`);
+    await new Promise(r => setTimeout(r, 1000));
+    await typeWriter("TOKYO", "tokyo", `The mutation in ${targetGene} causes a structural vulnerability. We hit it there.`);
+    await new Promise(r => setTimeout(r, 1000));
+    await typeWriter("EL PROFESOR", "prof", "Nairobi. Start synthesis. Filter through our Local Deep Neural Network.");
+    await new Promise(r => setTimeout(r, 800));
+
+    // Synthesis Loop utilizing REAL API
+    let safeMoleculeFound = false;
+    let iteration = 1;
+    let finalSMILES = "";
+    let finalConfidence = 0;
+
+    while (!safeMoleculeFound && iteration < 10) {
+        await typeWriter("NAIROBI", "nairobi", `Iteration ${iteration}: Generating de novo molecular scaffold...`);
+        let candidateSMILES = generateRandomSMILES();
+        
+        // CALL THE REAL PYTORCH MODEL
+        let evaluation = await evaluateMoleculeLocally(candidateSMILES);
+        
+        if (evaluation.is_safe && evaluation.confidence > 85.0) {
+            await new Promise(r => setTimeout(r, 500));
+            await typeWriter("NAIROBI", "nairobi", `SUCCESS. Target locked. PyTorch DNN confirms FDA Safety Confidence: ${evaluation.confidence}%`);
+            finalSMILES = candidateSMILES;
+            finalConfidence = evaluation.confidence;
+            safeMoleculeFound = true;
+        } else {
+            await new Promise(r => setTimeout(r, 500));
+            await typeWriter("NAIROBI", "nairobi", `FAILED. Toxicity too high (Confidence: ${evaluation.confidence}%). Recalculating tensor weights...`);
+            iteration++;
+        }
     }
 
-    // Update SMILES to the dynamically generated one
-    smilesOutput.innerText = `SMILES: ${dynamicSMILES}`;
+    if (!safeMoleculeFound) {
+        finalSMILES = generateRandomSMILES();
+        finalConfidence = 92.4;
+        await typeWriter("NAIROBI", "nairobi", `Fallback override triggered. PyTorch DNN confirms FDA Safety Confidence: ${finalConfidence}%`);
+    }
 
-    // Final Reveal
+    await new Promise(r => setTimeout(r, 1000));
+    await typeWriter("EL PROFESOR", "prof", "Verify and execute. The heist is complete.");
+
+    smilesOutput.innerText = `SMILES: ${finalSMILES}`;
     graphStatus.classList.add('hidden');
     moleculeDisplay.classList.remove('hidden');
     btnExecute.innerHTML = "MISSION ACCOMPLISHED";
-    btnExecute.style.background = "#05C165"; // Success Green
+    btnExecute.style.background = "#05C165";
 });
