@@ -1,5 +1,5 @@
 torch
-rdkit-pypi
+rdkit
 pandas
 scikit-learn
 fastapi
