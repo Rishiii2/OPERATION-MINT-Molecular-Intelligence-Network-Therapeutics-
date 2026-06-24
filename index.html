@@ -30,16 +30,16 @@
             <!-- Left Panel: Input -->
             <section class="panel glass">
                 <h2>The Blueprint</h2>
-                <p class="subtitle">Enter target genomic data to initiate the heist.</p>
+                <p class="subtitle">Enter target genomic data to initiate the heist. Try changing the values!</p>
                 
                 <div class="input-group">
                     <label>PATIENT ALIAS</label>
-                    <input type="text" value="PZ-2026-X" readonly>
+                    <input type="text" id="patient-id" value="PZ-2026-X">
                 </div>
 
                 <div class="input-group">
                     <label>GENOMIC MUTATION VECTOR</label>
-                    <textarea readonly>>chr17:41196150-41277500
+                    <textarea id="mutation-data">>chr17:41196150-41277500
 BRCA1 c.5266dupC (p.Gln1756Profs*74)
 Status: Pathogenic
 Target: Undruggable Vault</textarea>
@@ -65,14 +65,14 @@ Target: Undruggable Vault</textarea>
                             <circle cx="90" cy="30" r="5" fill="#fff"/>
                             <circle cx="10" cy="70" r="5" fill="#fff"/>
                         </svg>
-                        <h3>SYNTHESIS COMPLETE</h3>
-                        <p class="smiles">SMILES: O=C(c1ccc(Cc2n[nH]c(=O)c3ccccc23)cc1F)N1CCN...</p>
+                        <h3 id="synthesis-title">SYNTHESIS COMPLETE</h3>
+                        <p class="smiles" id="smiles-output">SMILES: O=C(c1ccc...</p>
                     </div>
                 </div>
             </section>
 
             <!-- Right Panel: Swarm Terminal -->
-            <section class="panel glass">
+            <section class="panel glass terminal-panel">
                 <h2>Swarm Terminal</h2>
                 <div class="terminal-container" id="terminal">
                     <div class="log-line">

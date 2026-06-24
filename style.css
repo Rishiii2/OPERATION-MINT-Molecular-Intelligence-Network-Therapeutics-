@@ -1,6 +1,6 @@
 :root {
     --bg-dark: #050505;
-    --primary-red: #E50914; /* Netflix / Money Heist Red */
+    --primary-red: #E50914; 
     --primary-red-glow: rgba(229, 9, 20, 0.6);
     --glass-bg: rgba(15, 15, 15, 0.65);
     --glass-border: rgba(229, 9, 20, 0.3);
@@ -43,7 +43,7 @@ body, html {
     z-index: 1;
     display: flex;
     flex-direction: column;
-    pointer-events: none; /* Let clicks pass through empty space */
+    pointer-events: none;
 }
 
 header {
@@ -106,6 +106,7 @@ h1 {
     gap: 20px;
     padding: 20px 40px 40px 40px;
     pointer-events: auto;
+    height: calc(100vh - 90px);
 }
 
 .panel {
@@ -113,6 +114,11 @@ h1 {
     padding: 30px;
     display: flex;
     flex-direction: column;
+    max-height: 100%;
+}
+
+.terminal-panel {
+    overflow: hidden;
 }
 
 .glass {
@@ -168,13 +174,18 @@ h2 {
 input, textarea {
     width: 100%;
     background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
     color: var(--text-main);
     padding: 12px;
     border-radius: 6px;
     font-family: var(--font-mono);
     font-size: 0.85rem;
     outline: none;
+    transition: border 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: var(--primary-red);
 }
 
 textarea {
@@ -212,13 +223,14 @@ textarea {
     font-family: var(--font-mono);
     font-size: 0.85rem;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    display: block;
+    height: 100%;
+    margin-top: 10px;
 }
 
 .log-line {
-    line-height: 1.5;
+    line-height: 1.6;
+    margin-bottom: 6px;
     animation: fadeIn 0.3s ease;
 }
 
@@ -227,7 +239,6 @@ textarea {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Agent Colors */
 .system { color: #888; }
 .prof { color: var(--primary-red); font-weight: bold; }
 .rio { color: #00e5ff; }
@@ -235,7 +246,6 @@ textarea {
 .berlin { color: #ffd700; }
 .nairobi { color: #b700ff; }
 
-/* Center Display */
 .visualizer-overlay {
     text-align: center;
     background: rgba(0,0,0,0.6);
