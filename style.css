@@ -1,0 +1,286 @@
+:root {
+    --bg-dark: #050505;
+    --primary-red: #E50914; /* Netflix / Money Heist Red */
+    --primary-red-glow: rgba(229, 9, 20, 0.6);
+    --glass-bg: rgba(15, 15, 15, 0.65);
+    --glass-border: rgba(229, 9, 20, 0.3);
+    --text-main: #f5f5f5;
+    --text-muted: #888;
+    --font-ui: 'Inter', sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-ui);
+    overflow: hidden;
+}
+
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none; /* Let clicks pass through empty space */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    pointer-events: auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.bank-icon {
+    font-size: 2rem;
+}
+
+h1 {
+    font-weight: 800;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    color: var(--primary-red);
+    text-shadow: 0 0 10px var(--primary-red-glow);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: var(--primary-red);
+    border-radius: 50%;
+}
+
+.pulse {
+    animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+    0% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(229, 9, 20, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0); }
+}
+
+.dashboard {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 20px;
+    padding: 20px 40px 40px 40px;
+    pointer-events: auto;
+}
+
+.panel {
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.glass:hover {
+    box-shadow: 0 8px 32px 0 rgba(229, 9, 20, 0.15);
+    border-color: rgba(229, 9, 20, 0.6);
+}
+
+.transparent {
+    background: transparent;
+    justify-content: center;
+    align-items: center;
+}
+
+h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--primary-red);
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+input, textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text-main);
+    padding: 12px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    outline: none;
+}
+
+textarea {
+    resize: none;
+    height: 120px;
+}
+
+.btn-primary {
+    margin-top: auto;
+    background: var(--primary-red);
+    color: white;
+    border: none;
+    padding: 18px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #ff0f1a;
+    box-shadow: 0 0 20px var(--primary-red-glow);
+}
+
+.terminal-container {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.log-line {
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Agent Colors */
+.system { color: #888; }
+.prof { color: var(--primary-red); font-weight: bold; }
+.rio { color: #00e5ff; }
+.tokyo { color: #ff0055; }
+.berlin { color: #ffd700; }
+.nairobi { color: #b700ff; }
+
+/* Center Display */
+.visualizer-overlay {
+    text-align: center;
+    background: rgba(0,0,0,0.6);
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+    backdrop-filter: blur(5px);
+}
+
+#graph-status {
+    border: none;
+    font-size: 1.5rem;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 5px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#molecule-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.poly-glow {
+    animation: polyGlow 2s infinite alternate;
+}
+
+@keyframes polyGlow {
+    from { filter: drop-shadow(0 0 2px var(--primary-red)); }
+    to { filter: drop-shadow(0 0 15px var(--primary-red)); }
+}
+
+.smiles {
+    font-family: var(--font-mono);
+    color: var(--primary-red);
+    font-size: 0.8rem;
+    margin-top: 10px;
+    word-break: break-all;
+}
