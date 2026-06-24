@@ -97,14 +97,73 @@ function animate() {
 animate();
 
 // ==========================================
-// TERMINAL SIMULATION LOGIC
+// FILE UPLOAD SIMULATION LOGIC
+// ==========================================
+const uploadZone = document.getElementById('upload-zone');
+const fileInput = document.getElementById('file-input');
+const uploadSuccess = document.getElementById('upload-success');
+const btnExecute = document.getElementById('btn-execute');
+const graphStatus = document.getElementById('graph-status');
+
+// Hidden inputs
+const hiddenPatientId = document.getElementById('patient-id');
+const hiddenMutationData = document.getElementById('mutation-data');
+const hiddenTargetGene = document.getElementById('target-gene');
+
+function handleFileUpload(file) {
+    // Simulate Parsing Delay
+    uploadZone.innerHTML = "<p class='upload-text'>Parsing genomic sequences...</p>";
+    uploadZone.style.pointerEvents = "none";
+    
+    setTimeout(() => {
+        uploadZone.classList.add('hidden');
+        uploadSuccess.classList.remove('hidden');
+        
+        // Generate mock parsed data
+        const mockPatientId = "PZ-" + Math.floor(Math.random() * 10000);
+        const mockMutation = "BRCA1 c.5266dupC (p.Gln1756Profs*74)";
+        const mockGene = "BRCA1";
+
+        document.getElementById('display-patient-id').innerText = `SUBJECT: ${mockPatientId}`;
+        
+        hiddenPatientId.value = mockPatientId;
+        hiddenMutationData.value = mockMutation;
+        hiddenTargetGene.value = mockGene;
+
+        // Arm the system
+        btnExecute.classList.remove('disabled');
+        btnExecute.disabled = false;
+        btnExecute.innerHTML = '<span class="btn-text">EXECUTE HEIST</span><span class="btn-glitch"></span>';
+        graphStatus.innerText = "SYSTEM READY";
+        graphStatus.style.color = "#fff";
+    }, 1500);
+}
+
+uploadZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) handleFileUpload(e.target.files[0]);
+});
+
+uploadZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+});
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) handleFileUpload(e.dataTransfer.files[0]);
+});
+
+
+// ==========================================
+// TERMINAL & DOSSIER LOGIC
 // ==========================================
 
 const terminal = document.getElementById('terminal');
-const btnExecute = document.getElementById('btn-execute');
-const graphStatus = document.getElementById('graph-status');
 const moleculeDisplay = document.getElementById('molecule-display');
 const smilesOutput = document.getElementById('smiles-output');
+const dossierOverlay = document.getElementById('dossier-overlay');
 
 async function typeWriter(agent, cssClass, text) {
     const line = document.createElement('div');
@@ -138,7 +197,6 @@ function generateRandomSMILES() {
     return result + ')cc1F)N1CCN';
 }
 
-// Function to call the real PyTorch backend!
 async function evaluateMoleculeLocally(smiles) {
     try {
         const response = await fetch('http://127.0.0.1:8000/predict', {
@@ -149,22 +207,16 @@ async function evaluateMoleculeLocally(smiles) {
         if (!response.ok) throw new Error("API Offline");
         return await response.json();
     } catch (error) {
-        // Fallback to random if the local server isn't running yet
         return { is_safe: Math.random() > 0.5, confidence: (Math.random() * 20 + 80).toFixed(2) };
     }
 }
 
 btnExecute.addEventListener('click', async () => {
-    if (isHeistActive) return;
+    if (isHeistActive || btnExecute.disabled) return;
     
-    const patientId = document.getElementById('patient-id').value || "UNKNOWN_SUBJECT";
-    const rawMutationData = document.getElementById('mutation-data').value;
-    
-    const lines = rawMutationData.split('\n');
-    let targetGene = "UNKNOWN_GENE";
-    if (lines.length > 1) {
-        targetGene = lines[1].split(' ')[0] || "TARGET";
-    }
+    const patientId = hiddenPatientId.value;
+    const rawMutationData = hiddenMutationData.value;
+    const targetGene = hiddenTargetGene.value;
 
     isHeistActive = true;
     btnExecute.innerHTML = "HEIST IN PROGRESS...";
@@ -177,14 +229,13 @@ btnExecute.addEventListener('click', async () => {
 
     await typeWriter("EL PROFESOR", "prof", "The plan is simple. We map the genome, synthesize the cure, and get out. Rio, status?");
     await new Promise(r => setTimeout(r, 1000));
-    await typeWriter("RIO", "rio", `Ingesting sequence for subject: ${patientId}. GraphRAG is compiling the subgraphs.`);
+    await typeWriter("RIO", "rio", `Ingesting parsed sequence for subject: ${patientId}. GraphRAG is compiling the subgraphs.`);
     await new Promise(r => setTimeout(r, 1000));
     await typeWriter("TOKYO", "tokyo", `The mutation in ${targetGene} causes a structural vulnerability. We hit it there.`);
     await new Promise(r => setTimeout(r, 1000));
     await typeWriter("EL PROFESOR", "prof", "Nairobi. Start synthesis. Filter through our Local Deep Neural Network.");
     await new Promise(r => setTimeout(r, 800));
 
-    // Synthesis Loop utilizing REAL API
     let safeMoleculeFound = false;
     let iteration = 1;
     let finalSMILES = "";
@@ -193,8 +244,6 @@ btnExecute.addEventListener('click', async () => {
     while (!safeMoleculeFound && iteration < 10) {
         await typeWriter("NAIROBI", "nairobi", `Iteration ${iteration}: Generating de novo molecular scaffold...`);
         let candidateSMILES = generateRandomSMILES();
-        
-        // CALL THE REAL PYTORCH MODEL
         let evaluation = await evaluateMoleculeLocally(candidateSMILES);
         
         if (evaluation.is_safe && evaluation.confidence > 85.0) {
@@ -217,11 +266,27 @@ btnExecute.addEventListener('click', async () => {
     }
 
     await new Promise(r => setTimeout(r, 1000));
-    await typeWriter("EL PROFESOR", "prof", "Verify and execute. The heist is complete.");
+    await typeWriter("EL PROFESOR", "prof", "Verify and execute. Generating final dossier.");
 
     smilesOutput.innerText = `SMILES: ${finalSMILES}`;
     graphStatus.classList.add('hidden');
     moleculeDisplay.classList.remove('hidden');
+    
+    // POPULATE DOSSIER
+    document.getElementById('report-patient').innerText = patientId;
+    document.getElementById('report-mutation').innerText = rawMutationData;
+    document.getElementById('report-problem').innerText = `Mutation in ${targetGene} leads to protein folding disruption resulting in unchecked cellular proliferation. Traditional therapies are ineffective against this specific structural anomaly.`;
+    document.getElementById('report-smiles').innerText = finalSMILES;
+    document.getElementById('report-confidence').innerText = `${finalConfidence}%`;
+
+    setTimeout(() => {
+        dossierOverlay.classList.remove('hidden');
+    }, 2000); // Pop up 2 seconds after completion
+
     btnExecute.innerHTML = "MISSION ACCOMPLISHED";
     btnExecute.style.background = "#05C165";
+});
+
+document.getElementById('close-dossier').addEventListener('click', () => {
+    dossierOverlay.classList.add('hidden');
 });

@@ -29,32 +29,40 @@
         <main class="dashboard">
             <!-- Left Panel: Input -->
             <section class="panel glass">
-                <h2>The Blueprint</h2>
-                <p class="subtitle">Enter target genomic data to initiate the heist. Try changing the values!</p>
+                <h2>Secure Data Uplink</h2>
+                <p class="subtitle">Upload patient genomic data (23andMe .txt or Clinical .vcf) to initialize the AI swarm.</p>
                 
-                <div class="input-group">
-                    <label>PATIENT ALIAS</label>
-                    <input type="text" id="patient-id" value="PZ-2026-X">
+                <div class="upload-zone" id="upload-zone">
+                    <div class="file-icon">🧬</div>
+                    <p class="upload-text">Drag & Drop Genomic File</p>
+                    <p class="upload-subtext">or click to browse local files</p>
+                    <input type="file" id="file-input" style="display: none;" accept=".vcf,.txt">
                 </div>
 
-                <div class="input-group">
-                    <label>GENOMIC MUTATION VECTOR</label>
-                    <textarea id="mutation-data">>chr17:41196150-41277500
-BRCA1 c.5266dupC (p.Gln1756Profs*74)
-Status: Pathogenic
-Target: Undruggable Vault</textarea>
+                <div id="upload-success" class="hidden">
+                    <div class="success-box">
+                        <span class="success-icon">✔️</span>
+                        <div>
+                            <p class="patient-id" id="display-patient-id">PATIENT: PENDING</p>
+                            <p class="patient-status">Genomic Vectors Parsed Successfully.</p>
+                        </div>
+                    </div>
                 </div>
 
-                <button id="btn-execute" class="btn-primary">
-                    <span class="btn-text">EXECUTE HEIST</span>
-                    <span class="btn-glitch"></span>
+                <!-- Hidden data for script -->
+                <input type="hidden" id="patient-id" value="">
+                <input type="hidden" id="mutation-data" value="">
+                <input type="hidden" id="target-gene" value="">
+
+                <button id="btn-execute" class="btn-primary disabled" disabled>
+                    <span class="btn-text">AWAITING DATA</span>
                 </button>
             </section>
 
             <!-- Center Panel: Visualization -->
             <section class="panel transparent center-panel">
-                <div class="visualizer-overlay">
-                    <h2 id="graph-status">ANALYZING THE VAULT</h2>
+                <div class="visualizer-overlay" id="visualizer">
+                    <h2 id="graph-status">AWAITING UPLINK</h2>
                     <div id="molecule-display" class="hidden">
                         <svg width="200" height="200" viewBox="0 0 100 100">
                             <!-- Dummy abstract molecular shape -->
@@ -81,6 +89,47 @@ Target: Undruggable Vault</textarea>
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- The Heist Report (Medical Dossier) -->
+    <div id="dossier-overlay" class="hidden">
+        <div class="dossier-container">
+            <div class="dossier-header">
+                <h2>TOP SECRET // CLINICAL DOSSIER</h2>
+                <span class="close-btn" id="close-dossier">&times;</span>
+            </div>
+            
+            <div class="dossier-content">
+                <div class="dossier-section">
+                    <h3>1. TARGET IDENTIFICATION</h3>
+                    <p><strong>SUBJECT:</strong> <span id="report-patient"></span></p>
+                    <p><strong>MUTATION VECTOR:</strong> <span id="report-mutation"></span></p>
+                </div>
+
+                <div class="dossier-section">
+                    <h3>2. THE VULNERABILITY</h3>
+                    <p id="report-problem">Protein folding disruption in the target gene resulting in unchecked cellular proliferation. Traditional therapies are ineffective against this specific structural anomaly.</p>
+                </div>
+
+                <div class="dossier-section">
+                    <h3>3. THE INFILTRATION (AI RECOGNITION)</h3>
+                    <p>Multi-Agent Swarm successfully traversed the Pan-Omics Knowledge Graph. GraphRAG identified a 4-hop causal link between the raw DNA string and the pathological phenotype. Target allosteric pocket confirmed by structural embedding models.</p>
+                </div>
+
+                <div class="dossier-section">
+                    <h3>4. THE LOOT (TREATMENT BLUEPRINT)</h3>
+                    <p><strong>MOLECULAR SCAFFOLD:</strong> <span class="smiles" id="report-smiles"></span></p>
+                    <p>De novo allosteric inhibitor synthesized by Generative Diffusion Engine.</p>
+                </div>
+
+                <div class="dossier-section warning-box">
+                    <h3>5. CLINICAL RISK ASSESSMENT</h3>
+                    <p><strong>PYTORCH TOXICITY CONFIDENCE:</strong> <span id="report-confidence" class="highlight-red"></span></p>
+                    <p class="disclaimer"><em>WARNING: MORPHEUS is an AI Clinical Decision Support System. This blueprint requires rapid in-vitro and in-vivo validation before human trial execution. Do not administer without clinical oversight.</em></p>
+                </div>
+            </div>
+            <button id="btn-print" class="btn-primary" style="width: 100%;">DOWNLOAD BLUEPRINT</button>
+        </div>
     </div>
 
     <script src="script.js"></script>

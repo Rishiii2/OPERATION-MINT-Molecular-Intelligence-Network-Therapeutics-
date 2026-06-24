@@ -158,39 +158,66 @@ h2 {
     margin-bottom: 30px;
 }
 
-.input-group {
-    margin-bottom: 25px;
+/* File Upload UI */
+.upload-zone {
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
 }
 
-.input-group label {
-    display: block;
-    font-size: 0.75rem;
-    color: var(--primary-red);
-    letter-spacing: 1.5px;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-input, textarea {
-    width: 100%;
-    background: rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.4);
-    color: var(--text-main);
-    padding: 12px;
-    border-radius: 6px;
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    outline: none;
-    transition: border 0.3s;
-}
-
-input:focus, textarea:focus {
+.upload-zone:hover, .upload-zone.dragover {
     border-color: var(--primary-red);
+    background: rgba(229, 9, 20, 0.1);
 }
 
-textarea {
-    resize: none;
-    height: 120px;
+.file-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.upload-text {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.upload-subtext {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.success-box {
+    background: rgba(5, 193, 101, 0.1);
+    border: 1px solid #05C165;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.success-icon {
+    font-size: 1.5rem;
+    color: #05C165;
+}
+
+.patient-id {
+    font-family: var(--font-mono);
+    font-weight: bold;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.patient-status {
+    font-size: 0.8rem;
+    color: #05C165;
 }
 
 .btn-primary {
@@ -206,12 +233,18 @@ textarea {
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    transition: background 0.3s;
+    transition: all 0.3s;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(.disabled) {
     background: #ff0f1a;
     box-shadow: 0 0 20px var(--primary-red-glow);
+}
+
+.btn-primary.disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
 }
 
 .terminal-container {
@@ -293,4 +326,98 @@ textarea {
     font-size: 0.8rem;
     margin-top: 10px;
     word-break: break-all;
+}
+
+/* Dossier Overlay Styles */
+#dossier-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+    animation: fadeIn 0.5s ease;
+}
+
+.dossier-container {
+    background: #111;
+    width: 700px;
+    max-width: 90%;
+    max-height: 90vh;
+    border: 1px solid var(--primary-red);
+    box-shadow: 0 0 40px rgba(229, 9, 20, 0.2);
+    border-radius: 4px;
+    padding: 30px;
+    overflow-y: auto;
+    position: relative;
+    font-family: var(--font-mono);
+}
+
+.dossier-header {
+    border-bottom: 2px solid var(--primary-red);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dossier-header h2 {
+    color: var(--primary-red);
+    margin: 0;
+    border: none;
+    padding: 0;
+    font-size: 1.5rem;
+}
+
+.close-btn {
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: var(--primary-red);
+}
+
+.dossier-section {
+    margin-bottom: 25px;
+}
+
+.dossier-section h3 {
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.dossier-section p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #eee;
+}
+
+.warning-box {
+    background: rgba(229, 9, 20, 0.1);
+    border-left: 4px solid var(--primary-red);
+    padding: 15px;
+}
+
+.highlight-red {
+    color: var(--primary-red);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.disclaimer {
+    color: #888 !important;
+    font-size: 0.8rem !important;
+    margin-top: 10px;
+    font-style: italic;
 }
